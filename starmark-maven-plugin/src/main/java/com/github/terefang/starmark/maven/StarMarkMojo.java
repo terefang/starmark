@@ -91,7 +91,6 @@ public class StarMarkMojo extends AbstractMojo
             }
         }
         else
-        if(this.outputDocument.indexOf('%')>0)
         {
             _proc.processFiles(
                     _plist,
