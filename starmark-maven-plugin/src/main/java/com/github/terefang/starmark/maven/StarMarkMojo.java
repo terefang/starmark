@@ -85,7 +85,7 @@ public class StarMarkMojo extends AbstractMojo
                         Collections.singletonList(_f),
                         this.resourceDirectories,
                         this.styles,
-                        new File(String.format(this.outputDocument, _i, _f.getName())),
+                        new File(String.format(this.outputDocument, _i, _f==null ? "null": _f.getName())),
                         this.documentClass);
                 _i++;
             }
