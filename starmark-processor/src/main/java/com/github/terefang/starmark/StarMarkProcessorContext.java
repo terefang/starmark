@@ -51,15 +51,21 @@ public class StarMarkProcessorContext
         }
 
         List<String> _css = new Vector<>();
-        for(File _c : _cssFiles)
+        if(_cssFiles!=null)
         {
-            _css.add(_c.getAbsolutePath());
+            for(File _c : _cssFiles)
+            {
+                _css.add(_c.getAbsolutePath());
+            }
         }
 
         List<String> _search = new Vector<>();
-        for(File _s : _searchPath)
+        if(_searchPath!=null)
         {
-            _search.add(_s.getAbsolutePath());
+            for(File _s : _searchPath)
+            {
+                _search.add(_s.getAbsolutePath());
+            }
         }
 
         return from(_search, _css, _files, _outFile.getAbsolutePath(), _class);
