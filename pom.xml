@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.github.terefang</groupId>
+    <artifactId>starmark</artifactId>
+    <version>2020.7.16</version>
+    <modules>
+        <module>starmark-processor</module>
+        <module>starmark-maven-plugin</module>
+    </modules>
+
+    <packaging>pom</packaging>
+
+    <name>starmark</name>
+
+    <url>https://github.com/terefang/starmark</url>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+        <maven.version>3.6.3</maven.version>
+        <flexmark.version>0.62.2</flexmark.version>
+        <timestamp>${maven.build.timestamp}</timestamp>
+        <maven.build.timestamp.format>yyyyMMdd'+'HHmm</maven.build.timestamp.format>
+    </properties>
+
+
+
+</project>
