@@ -85,31 +85,41 @@ This category covers any map which implements java.util.Properties. These parame
 
         String _docdir = this.documentDirectory.getAbsolutePath();
 
-        this.getLog().info("markupType = "+this.markupType);
-        this.getLog().info("outputDocument = "+this.outputDocument);
-        this.getLog().info("documentDirectory = "+_docdir);
-        this.getLog().info("documentIncludes = "+this.documentIncludes);
-        this.getLog().info("documentExcludes = "+this.documentExcludes);
-
+        if(this.getLog().isInfoEnabled())
+        {
+            this.getLog().info("markupType = " + this.markupType);
+            this.getLog().info("outputDocument = " + this.outputDocument);
+            this.getLog().info("documentDirectory = " + _docdir);
+            this.getLog().info("documentIncludes = " + this.documentIncludes);
+            this.getLog().info("documentExcludes = " + this.documentExcludes);
+        }
         List<File> _list = FileUtils.getFiles(this.documentDirectory, this.documentIncludes, this.documentExcludes, true);
         _list.sort((x,y) -> { return x.getAbsolutePath().compareToIgnoreCase(y.getAbsolutePath()); });
 
         _plist.addAll(_list);
 
         StarMarkProcessor _proc = new StarMarkProcessor();
+        this.getLog().info("processing to output " + this.outputDocument);
         if(this.outputDocument.indexOf('{')>0)
         {
             int _i = 1;
             for(File _f : _plist)
             {
                 String _fullname = _f==null ? "null": _f.getName();
-                this.getLog().info("fullName = "+_fullname);
+                if(this.getLog().isInfoEnabled()) this.getLog().info("fullName = "+_fullname);
                 String _extname = _f==null ? "null": FileUtils.getExtension(_fullname);
-                this.getLog().info("extName = "+_extname);
+                if(this.getLog().isInfoEnabled()) this.getLog().info("extName = "+_extname);
                 String _basename = _f==null ? "null": _fullname.substring(0, _fullname.length()-(1+_extname.length()));
-                this.getLog().info("baseName = "+_basename);
+                if(this.getLog().isInfoEnabled()) this.getLog().info("baseName = "+_basename);
                 String _pathname = _f==null ? "null": _f.getParentFile().getAbsolutePath();
-                this.getLog().info("pathName = "+_pathname);
+                if(_pathname.startsWith(_docdir)) {
+                    _pathname = _pathname.substring(_docdir.length());
+                }
+                else
+                {
+                    _pathname = "";
+                }
+                if(this.getLog().isInfoEnabled()) this.getLog().info("pathName = "+_pathname);
 
                 StarMarkProcessorContext _ctx = StarMarkProcessorContext.from(
                         this.resourceDirectories,
@@ -136,13 +146,20 @@ This category covers any map which implements java.util.Properties. These parame
             for(File _f : _plist)
             {
                 String _fullname = _f==null ? "null": _f.getName();
-                this.getLog().info("fullName = "+_fullname);
+                if(this.getLog().isInfoEnabled()) this.getLog().info("fullName = "+_fullname);
                 String _extname = _f==null ? "null": FileUtils.getExtension(_fullname);
-                this.getLog().info("extName = "+_extname);
+                if(this.getLog().isInfoEnabled()) this.getLog().info("extName = "+_extname);
                 String _basename = _f==null ? "null": _fullname.substring(0, _fullname.length()-(1+_extname.length()));
-                this.getLog().info("baseName = "+_basename);
+                if(this.getLog().isInfoEnabled()) this.getLog().info("baseName = "+_basename);
                 String _pathname = _f==null ? "null": _f.getParentFile().getAbsolutePath();
-                this.getLog().info("pathName = "+_pathname);
+                if(_pathname.startsWith(_docdir)) {
+                    _pathname = _pathname.substring(_docdir.length());
+                }
+                else
+                {
+                    _pathname = "";
+                }
+                if(this.getLog().isInfoEnabled()) this.getLog().info("pathName = "+_pathname);
 
                 StarMarkProcessorContext _ctx = StarMarkProcessorContext.from(
                         this.resourceDirectories,
