@@ -1,6 +1,8 @@
 package com.github.terefang.starmark;
 
 import com.github.terefang.starmark.flex.FlexMarkAdapter;
+import com.github.terefang.starmark.xwiki.AbstractXwikiRendererAdapter;
+import org.xwiki.rendering.syntax.Syntax;
 
 import java.io.PrintWriter;
 import java.io.Reader;
@@ -15,7 +17,7 @@ public interface StarMarkAdapter {
         }
         else
         {
-            return FlexMarkAdapter.create(_args);
+            return AbstractXwikiRendererAdapter.create(_type, _args);
         }
     }
 }

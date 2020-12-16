@@ -21,6 +21,9 @@ public class StarMarkProcessorContext
     Properties properties;
     File outFile;
 
+    File outputTemplate;
+    File outputTemplateVariables;
+
     PrintWriter outStream;
     Deque<StarMarkProcessorContextItem> queue;
     StarMarkProcessorContextItem current;
@@ -81,13 +84,18 @@ public class StarMarkProcessorContext
             _searchPathFiles.add(new File(_sp));
         }
 
+        File _out = new File(_outFile);
+        if(!_out.getParentFile().exists())
+        {
+            _out.getParentFile().mkdirs();
+        }
         StarMarkProcessorContext _ctx = StarMarkProcessorContext.builder()
                 .cssFiles(_cssFiles)
                 .searchPath(_searchPathFiles)
                 .sourceFiles(_sources)
-                .outFile(new File(_outFile))
+                .outFile(_out)
                 .queue(new ArrayDeque<>())
-                .outStream(new PrintWriter(new BufferedWriter(new FileWriter(_outFile))))
+                .outStream(new PrintWriter(new BufferedWriter(new FileWriter(_out))))
                 .cssClass(_class)
                 .pageSpacer(true)
                 .build();

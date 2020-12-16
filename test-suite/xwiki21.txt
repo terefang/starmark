@@ -1,0 +1,3 @@
+%!set generator starmark test case xwiki
+
+this is **bold**

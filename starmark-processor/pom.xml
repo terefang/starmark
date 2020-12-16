@@ -11,8 +11,46 @@
 
     <groupId>com.github.terefang.starmark</groupId>
     <artifactId>starmark-processor</artifactId>
-
+    <properties>
+        <xwiki.version>12.0</xwiki.version>
+    </properties>
     <dependencies>
+        <dependency>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+            <version>1.12.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.xwiki.rendering</groupId>
+            <artifactId>xwiki-rendering-api</artifactId>
+            <version>${xwiki.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.xwiki.rendering</groupId>
+            <artifactId>xwiki-rendering-syntax-xwiki21</artifactId>
+            <version>${xwiki.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.xwiki.rendering</groupId>
+            <artifactId>xwiki-rendering-syntax-html5</artifactId>
+            <version>${xwiki.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.xwiki.contrib.markdown</groupId>
+            <artifactId>syntax-markdown-flavor-github</artifactId>
+            <version>8.7</version>
+        </dependency>
+        <dependency>
+            <groupId>org.xwiki.commons</groupId>
+            <artifactId>xwiki-commons-component-default</artifactId>
+            <version>${xwiki.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>1.7.30</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
@@ -33,6 +71,7 @@
             <artifactId>jinjava</artifactId>
             <version>2.4.8</version>
         </dependency>
+        <!--
         <dependency>
             <groupId>org.thymeleaf</groupId>
             <artifactId>thymeleaf</artifactId>
@@ -53,6 +92,7 @@
             <artifactId>commons-jexl3</artifactId>
             <version>3.1</version>
         </dependency>
+        -->
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>

@@ -1,6 +1,8 @@
 package com.github.terefang.starmark;
 
+import com.github.terefang.starmark.template.JinjavaTemplateUtil;
 import com.github.terefang.starmark.util.ClasspathResourceLoader;
+import com.github.terefang.starmark.util.ContextUtil;
 import com.github.terefang.starmark.util.ResourceHelper;
 import com.google.common.escape.Escaper;
 import com.google.common.net.UrlEscapers;
@@ -91,6 +93,7 @@ public class StarMarkProcessor
 
     Escaper _escaper = UrlEscapers.urlPathSegmentEscaper();
 
+    static String[] _keys = { "generator", "creator", "author", "date", "keywords", "title" };
     @SneakyThrows
     public void process(StarMarkProcessorContext _ctx)
     {
@@ -98,75 +101,93 @@ public class StarMarkProcessor
 
         StarMarkProcessorContextItem _item;
 
-        _ctx.getOutStream().println("<!DOCTYPE html>");
-        _ctx.getOutStream().println("<html>");
-        _ctx.getOutStream().println("<head>");
+        Map<String, Object> _context;
+        if(_ctx.getOutputTemplateVariables()==null)
+        {
+            _context = ContextUtil.loadContextFromHjson(new InputStreamReader(ClasspathResourceLoader.of("default-variables.hson").getInputStream()));
+        }
+        else
+        {
+            _context = ContextUtil.loadContextFromHjson(new FileReader(_ctx.getOutputTemplateVariables()));
+        }
 
-        _ctx.getOutStream().println("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />");
+        if(!_context.containsKey("meta"))
+        {
+            _context.put("meta", new HashMap<>());
+        }
+        Map<String, String> _meta = (Map<String, String>) _context.get("meta");
 
-        _ctx.getOutStream().println("<meta name=\"generator\" content=\"$generator-meta$\" />");
-        _ctx.getOutStream().println("<meta name=\"author\" content=\"$author-meta$\" />");
-        _ctx.getOutStream().println(MessageFormat.format("<meta name=\"date\" content=\"{0,time,YYYY-MM-dd HH:mm:ss}\" />", new Date()));
-        _ctx.getOutStream().println("<meta name=\"keywords\" content=\"$for(keywords)$$keywords$$sep$, $endfor$\" />");
 
-        _ctx.getOutStream().println("<title>$if(title-prefix)$$title-prefix$ – $endif$$pagetitle$</title>");
+        _meta.put("date", MessageFormat.format("{0,time,YYYY-MM-dd HH:mm:ss}", new Date()));
 
+        List<String> _cssList = new Vector<>();
+        _context.put("cssfiles", _cssList);
         for(String _css : _ctx.getCssFiles())
         {
-            _ctx.getOutStream().println(ResourceHelper.stringifyCss(_css, _ctx.getSearchPath()));
+            _cssList.add(ResourceHelper.stringifyCss(_css, _ctx.getSearchPath()));
         }
-        _ctx.getOutStream().println("</head>");
 
-        _ctx.getOutStream().println("<body>");
-        while((_item = _ctx.getCurrent())!=null) {
+        List<Map<String, String>> _bodyList = new Vector<>();
+        _context.put("bodies", _bodyList);
+        while((_item = _ctx.getCurrent())!=null)
+        {
+            Map<String, String> _body = new HashMap<>();
+            _bodyList.add(_body);
             String _fileName = _item.getFile() == null ? null : _item.getFile().getName();
+            _body.put("file", _fileName);
 
+            String _class = "";
             if(_fileName==null)
             {
-                _ctx.getOutStream().println("<section  class='fullpage emptypage' >");
+                _class += "fullpage emptypage";
+            }
+            if (ResourceHelper.isImageSuffix(_fileName))
+            {
+                _class += "fullpage";
+                _body.put("content", MessageFormat.format("<img src=\"{0}\" >",ResourceHelper.resourceToDataUrl(_item.getFile().getAbsolutePath())));
             }
             else
             {
-                _ctx.getOutStream().println(MessageFormat.format("<section data-file=\"{0}\"", _fileName));
-
-                if (ResourceHelper.isImageSuffix(_fileName))
+                Reader _reader = this.resolveIncludesAndMeta(_item, new FileReader(_item.getFile()), _ctx.getCurrent().getBasedir());
+                for(String _k : _keys)
                 {
-                    _ctx.getOutStream().println(" class='fullpage' >");
-                    _ctx.getOutStream().println(MessageFormat.format("<img src=\"{0}\" >",ResourceHelper.resourceToDataUrl(_item.getFile().getAbsolutePath())));
-                }
-                else
-                {
-                    Reader _reader = this.resolveIncludesAndMeta(_item, new FileReader(_item.getFile()), _ctx.getCurrent().getBasedir());
-
-                    if (_ctx.cssClass != null || _item.getProperties().containsKey("class")) {
-                        _ctx.getOutStream().print(" class=\"");
-
-                        if (_item.getProperties().containsKey("class"))
-                            _ctx.getOutStream().print(" " + _item.getProperties().getProperty("class") + " ");
-
-                        if (_ctx.cssClass != null)
-                            _ctx.getOutStream().print(" " + _ctx.cssClass + " ");
-
-                        _ctx.getOutStream().print("\"");
+                    if(_item.getProperties().containsKey(_k))
+                    {
+                        _meta.put(_k, _item.getProperties().getProperty(_k));
                     }
-                    _ctx.getOutStream().println(" >");
-                    StringWriter _string = new StringWriter();
-                    PrintWriter _pwr = new PrintWriter(_string);
-                    _ctx.getAdapter().process(_ctx, _item, _reader, _pwr);
-                    _pwr.flush();
-                    _ctx.getOutStream().println(mapEntitiesToString(_string.getBuffer().toString(), false));
                 }
+
+                if (_ctx.cssClass != null || _item.getProperties().containsKey("class"))
+                {
+                    if (_item.getProperties().containsKey("class"))
+                        _class += " " + _item.getProperties().getProperty("class");
+
+                    if (_ctx.cssClass != null)
+                        _class += " " + _ctx.cssClass;
+                }
+                StringWriter _string = new StringWriter();
+                PrintWriter _pwr = new PrintWriter(_string);
+                _ctx.getAdapter().process(_ctx, _item, _reader, _pwr);
+                _pwr.flush();
+                _body.put("content", mapEntitiesToString(_string.getBuffer().toString(), false));
             }
-            _ctx.getOutStream().println("</section>");
+
+            _body.put("class", _class);
 
             if(_ctx.isPageSpacer())
-                _ctx.getOutStream().println("<div class=\"pagespacer\">&nbsp;</div>");
+                _body.put("spacer", "<div class=\"pagespacer\">&nbsp;</div>");
 
-            _ctx.getOutStream().flush();
             _ctx.setCurrent(null);
         }
-        _ctx.getOutStream().println("</body>");
-        _ctx.getOutStream().println("</html>");
+
+        if(_ctx.getOutputTemplate()==null)
+        {
+            _ctx.getOutStream().println(JinjavaTemplateUtil.process(ClasspathResourceLoader.of("default-template.j2").getInputStream(), _context));
+        }
+        else
+        {
+            _ctx.getOutStream().println(JinjavaTemplateUtil.process(_ctx.getOutputTemplate(), _context));
+        }
 
         _ctx.getOutStream().flush();
         _ctx.getOutStream().close();
