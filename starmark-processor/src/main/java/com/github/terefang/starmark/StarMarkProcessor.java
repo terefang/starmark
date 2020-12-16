@@ -141,6 +141,7 @@ public class StarMarkProcessor
             {
                 _class += "fullpage emptypage";
             }
+            else
             if (ResourceHelper.isImageSuffix(_fileName))
             {
                 _class += "fullpage";
