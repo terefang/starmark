@@ -99,7 +99,7 @@ This category covers any map which implements java.util.Properties. These parame
                 String _fullname = _f==null ? "null": _f.getName();
                 String _extname = _f==null ? "null": FileUtils.getExtension(_fullname);
                 String _basename = _f==null ? "null": _fullname.substring(0, _fullname.length()-(1+_extname.length()));
-                String _pathname = _f==null ? "null": _f.getAbsolutePath().substring(_docdir.length());
+                String _pathname = _f==null ? "null": _f.getParentFile().getAbsolutePath().substring(_docdir.length());
 
                 StarMarkProcessorContext _ctx = StarMarkProcessorContext.from(
                         this.resourceDirectories,
@@ -128,7 +128,7 @@ This category covers any map which implements java.util.Properties. These parame
                 String _fullname = _f==null ? "null": _f.getName();
                 String _extname = _f==null ? "null": FileUtils.getExtension(_fullname);
                 String _basename = _f==null ? "null": _fullname.substring(0, _fullname.length()-(1+_extname.length()));
-                String _pathname = _f==null ? "null": _f.getAbsolutePath().substring(_docdir.length());
+                String _pathname = _f==null ? "null": _f.getParentFile().getAbsolutePath().substring(_docdir.length());
 
                 StarMarkProcessorContext _ctx = StarMarkProcessorContext.from(
                         this.resourceDirectories,
