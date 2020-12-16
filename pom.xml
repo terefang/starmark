@@ -6,7 +6,7 @@
 
     <groupId>com.github.terefang</groupId>
     <artifactId>starmark</artifactId>
-    <version>2020.8.19.3</version>
+    <version>2020.8.19.4</version>
     <modules>
         <module>starmark-processor</module>
         <module>starmark-maven-plugin</module>
